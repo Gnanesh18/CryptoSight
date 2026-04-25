@@ -1,5 +1,5 @@
 import { Star, TrendingUp, TrendingDown } from 'lucide-react';
-import { Coin } from '../../types/coin';
+import type { Coin } from '../../types/coin';
 import { formatCurrency, formatPercent } from '../../utils/formatters';
 import { SparklineChart } from './SparklineChart';
 import { useWatchlistStore } from '../../store/useWatchlistStore';
