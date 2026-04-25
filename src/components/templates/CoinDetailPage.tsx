@@ -405,7 +405,7 @@ export function CoinDetailPage({ isDark }: CoinDetailPageProps) {
                     </thead>
                     <tbody className="divide-y divide-white/5">
                       {isLoadingChart ? (
-                        Array.from({ length: 8 }).map((_, i) => (
+                        Array.from({ length: 30 }).map((_, i) => (
                           <tr key={i}>
                             <td className="py-3 px-4"><Skeleton variant="text" width={96} /></td>
                             <td className="py-3 px-4"><div className="flex justify-end"><Skeleton variant="text" width={80} /></div></td>

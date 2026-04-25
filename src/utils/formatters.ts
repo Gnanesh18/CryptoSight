@@ -26,12 +26,12 @@ export function formatCurrency(value: number, compact = false): string {
     }).format(value);
   }
 
-  // Default: 2–4 decimal places
+  // Default: fixed 2 decimal places to prevent layout shift
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
     minimumFractionDigits: 2,
-    maximumFractionDigits: 4,
+    maximumFractionDigits: 2,
   }).format(value);
 }
 
@@ -54,7 +54,7 @@ export function formatLargeNumber(value: number | null | undefined, prefix = '')
     return `${prefix}${(value / 1e6).toFixed(2)}M`;
   }
   if (abs >= 1e3) {
-    return `${prefix}${(value / 1e3).toFixed(1)}K`;
+    return `${prefix}${(value / 1e3).toFixed(2)}K`;
   }
 
   return `${prefix}${value.toFixed(0)}`;

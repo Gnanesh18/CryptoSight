@@ -92,7 +92,7 @@ export function MarketTable({
   return (
     <div className="flex flex-col gap-3 sm:gap-4">
       {/* desktop version */}
-      <div className="hidden sm:block overflow-x-auto">
+      <div className="hidden sm:block overflow-x-auto min-h-[1320px]">
         <table className="w-full border-collapse">
           <thead>
             <tr className={cn('border-b', isDark ? 'border-white/8' : 'border-gray-100')}>
@@ -128,7 +128,7 @@ export function MarketTable({
           </thead>
           <tbody>
             {isLoading
-              ? Array.from({ length: 10 }).map((_, i) => <CoinRowSkeleton key={i} isDark={isDark} />)
+              ? Array.from({ length: PAGE_SIZE }).map((_, i) => <CoinRowSkeleton key={i} isDark={isDark} />)
               : paginatedCoins.map((coin) => (
                   <CoinRow key={coin.id} coin={coin} onSelect={onCoinSelect} isDark={isDark} />
                 ))}
@@ -137,10 +137,10 @@ export function MarketTable({
       </div>
 
       {/* mobile version */}
-      <div className="sm:hidden">
+      <div className="sm:hidden min-h-[1280px]">
         {isLoading ? (
           <div className="divide-y divide-white/5">
-            {Array.from({ length: 8 }).map((_, i) => (
+            {Array.from({ length: PAGE_SIZE }).map((_, i) => (
               <MobileCardSkeleton key={i} isDark={isDark} />
             ))}
           </div>

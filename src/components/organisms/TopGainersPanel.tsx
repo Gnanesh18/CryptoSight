@@ -43,7 +43,7 @@ export function TopGainersPanel({ coins, isLoading, isDark, onCoinSelect, onView
       <div className={cn('divide-y', isDark ? 'divide-white/5' : 'divide-gray-100')}>
         {isLoading
           ? Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="flex items-center gap-3 px-4 py-3 h-[52px]">
+              <div key={i} className="flex items-center gap-3 px-4 py-3 h-[60px]">
                 <Skeleton variant="circular" width={28} height={28} className="flex-shrink-0" />
                 <div className="flex-1 space-y-1.5">
                   <Skeleton variant="text" width={80} />
