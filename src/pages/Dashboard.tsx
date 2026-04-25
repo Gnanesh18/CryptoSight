@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect, Suspense, lazy } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { LayoutGrid, Star, TrendingUp, TrendingDown, Flame } from 'lucide-react';
 import type { Tab } from '../types/coin';
 import { useMarketData } from '../hooks/useMarketData';
@@ -30,11 +30,11 @@ export default function Dashboard({ isDark }: DashboardProps) {
   const [showScrollHint, setShowScrollHint] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>('all');
 
-  const { coins, isLoading, isRefreshing, error, lastUpdated, refetch, secondsUntilRefresh } = useMarketData(1);
+  const { coins, isLoading, isRefreshing, error, lastUpdated, refetch } = useMarketData(1);
   const { data: globalData, isLoading: isLoadingGlobal } = useGlobalData();
   const { data: trendingData, isLoading: isLoadingTrending } = useTrending();
 
-  // Check if tabs overflow
+  // check for tab overflow to show scroll hint
   useEffect(() => {
     const el = tabsRef.current;
     if (!el) return;
@@ -49,7 +49,7 @@ export default function Dashboard({ isDark }: DashboardProps) {
 
   const handleTabChange = useCallback((tab: Tab) => {
     setActiveTab(tab);
-    // Smooth scroll to table
+    // scroll to table
     setTimeout(() => tableRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
   }, []);
 
@@ -57,18 +57,18 @@ export default function Dashboard({ isDark }: DashboardProps) {
 
   return (
     <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 pb-20 sm:pb-8 animate-fade-in">
-      {/* Hero area */}
+      {/* stats bar */}
       <div className="relative">
         <GlobalStatsBar data={globalData} isLoading={isLoadingGlobal} isDark={isDark} />
       </div>
 
-      {/* Trending + Top Gainers */}
+      {/* trending stuff */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
         <TrendingPanel data={trendingData} isLoading={isLoadingTrending} isDark={isDark} onCoinSelect={handleCoinSelect} onViewMore={() => handleTabChange('trending')} />
         <TopGainersPanel coins={coins} isLoading={isLoading} isDark={isDark} onCoinSelect={handleCoinSelect} onViewMore={() => handleTabChange('gainers')} />
       </div>
 
-      {/* Filter Tabs + Refresh */}
+      {/* filter tabs */}
       <div className="flex items-center gap-2 sm:gap-3 justify-between mb-3 sm:mb-4">
         <div className={cn('relative flex-1 min-w-0', showScrollHint && 'scroll-fade')}>
           <div
@@ -78,7 +78,6 @@ export default function Dashboard({ isDark }: DashboardProps) {
               isDark ? 'bg-white/5 border-white/8' : 'bg-gray-100 border-gray-200'
             )}
             role="tablist"
-            aria-label="Market filter tabs"
           >
             {FILTER_TABS.map(({ id, shortLabel, label, Icon }) => (
               <button
@@ -87,9 +86,7 @@ export default function Dashboard({ isDark }: DashboardProps) {
                 aria-selected={activeTab === id}
                 onClick={() => handleTabChange(id)}
                 className={cn(
-                  'flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap',
-                  'transition-all duration-150 cursor-pointer',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400',
+                  'flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap transition-all duration-150',
                   activeTab === id
                     ? 'bg-brand-500 text-white shadow-md shadow-brand-500/25'
                     : isDark ? 'text-gray-400 hover:text-white hover:bg-white/5' : 'text-gray-500 hover:text-gray-900 hover:bg-white'
@@ -104,16 +101,16 @@ export default function Dashboard({ isDark }: DashboardProps) {
         </div>
 
         <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
-          <RefreshCountdown secondsRemaining={secondsUntilRefresh} totalSeconds={60} isRefreshing={isRefreshing} isDark={isDark} />
+          <RefreshCountdown isRefreshing={isRefreshing} isDark={isDark} />
           {lastUpdated && (
             <p className={cn('text-xs flex-shrink-0 hidden lg:block', isDark ? 'text-gray-500' : 'text-gray-400')}>
-              Updated: {lastUpdated.toLocaleTimeString()}
+              Last update: {lastUpdated.toLocaleTimeString()}
             </p>
           )}
         </div>
       </div>
 
-      {/* Market Table */}
+      {/* actual table */}
       <div
         ref={tableRef}
         className={cn(

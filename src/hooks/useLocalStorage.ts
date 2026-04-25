@@ -1,26 +1,16 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
-/**
- * A typed, SSR-safe localStorage hook.
- * Reads from localStorage on mount, writes on update.
- * Falls back to `initialValue` if key doesn't exist or JSON parsing fails.
- */
+// custom hook for local storage
 export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T) => void] {
-  // Keep initialValue stable via ref to avoid dependency issues
-  const initialValueRef = useRef(initialValue);
-
-  // SSR guard — localStorage is not available in server environments
-  const readValue = useCallback((): T => {
-    if (typeof window === 'undefined') return initialValueRef.current;
+  const [storedValue, setStoredValue] = useState<T>(() => {
+    if (typeof window === 'undefined') return initialValue;
     try {
       const item = window.localStorage.getItem(key);
-      return item ? (JSON.parse(item) as T) : initialValueRef.current;
+      return item ? (JSON.parse(item) as T) : initialValue;
     } catch {
-      return initialValueRef.current;
+      return initialValue;
     }
-  }, [key]);
-
-  const [storedValue, setStoredValue] = useState<T>(readValue);
+  });
 
   const setValue = useCallback(
     (value: T) => {
@@ -29,20 +19,20 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T)
         window.localStorage.setItem(key, JSON.stringify(value));
         setStoredValue(value);
       } catch {
-        console.warn(`useLocalStorage: Failed to set key "${key}"`);
+        console.warn(`error saving to local storage: ${key}`);
       }
     },
     [key]
   );
 
-  // Sync with storage events from other tabs
+  // sync if other tabs change storage
   useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === key && event.newValue !== null) {
         try {
           setStoredValue(JSON.parse(event.newValue) as T);
         } catch {
-          // ignore parse errors from other tabs
+          // just ignore errors here
         }
       }
     };

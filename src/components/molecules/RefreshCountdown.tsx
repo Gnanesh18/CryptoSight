@@ -3,28 +3,27 @@ import { cn } from '../../utils/cn';
 import { useState, useEffect } from 'react';
 
 interface RefreshCountdownProps {
-  secondsRemaining: number;
-  totalSeconds?: number;
   isRefreshing: boolean;
   isDark?: boolean;
 }
 
-/**
- * Shows a visual countdown bar and seconds until the next data refresh.
- * Displays a spinner when actively refreshing in the background.
- */
+// countdown timer for the next refresh
 export function RefreshCountdown({
-  secondsRemaining: initialSeconds,
-  totalSeconds = 60,
   isRefreshing,
   isDark = true,
 }: RefreshCountdownProps) {
-  const [seconds, setSeconds] = useState(initialSeconds);
+  const [seconds, setSeconds] = useState(60);
+  const [prevRefreshing, setPrevRefreshing] = useState(isRefreshing);
 
-  useEffect(() => {
-    setSeconds(initialSeconds);
-  }, [initialSeconds]);
+  // reset timer when refresh finishes
+  if (prevRefreshing && !isRefreshing) {
+    setPrevRefreshing(false);
+    setSeconds(60);
+  } else if (!prevRefreshing && isRefreshing) {
+    setPrevRefreshing(true);
+  }
 
+  // tick every second
   useEffect(() => {
     if (isRefreshing) return;
     const interval = setInterval(() => {
@@ -33,13 +32,13 @@ export function RefreshCountdown({
     return () => clearInterval(interval);
   }, [isRefreshing]);
 
-  const progress = (seconds / totalSeconds) * 100;
+  const progress = (seconds / 60) * 100;
 
   return (
     <div className="flex items-center gap-3 min-w-0">
       {isRefreshing ? (
         <div className="flex items-center gap-1.5 text-brand-400">
-          <RefreshCw className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />
+          <RefreshCw className="w-3.5 h-3.5 animate-spin" />
           <span className="text-xs font-medium">Updating…</span>
         </div>
       ) : (
@@ -47,14 +46,14 @@ export function RefreshCountdown({
           Refreshes in {seconds}s
         </span>
       )}
-      {/* Progress bar */}
+      
+      {/* progress bar */}
       <div
         className={cn('h-1 w-20 rounded-full overflow-hidden flex-shrink-0', isDark ? 'bg-white/8' : 'bg-gray-200')}
         role="progressbar"
         aria-valuenow={seconds}
         aria-valuemin={0}
-        aria-valuemax={totalSeconds}
-        aria-label={`${seconds} seconds until next refresh`}
+        aria-valuemax={60}
       >
         <div
           className="h-full rounded-full bg-brand-500 transition-all duration-1000 ease-linear"
