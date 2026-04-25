@@ -96,7 +96,7 @@ export function SearchBar({ isDark = true, className, onSearchOpen }: SearchBarP
         <input
           ref={inputRef}
           id="coin-search"
-          type="search"
+          type="text"
           role="combobox"
           aria-expanded={showDropdown}
           aria-controls="search-results"

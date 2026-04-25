@@ -50,7 +50,14 @@ export default function Dashboard({ isDark }: DashboardProps) {
     return () => ro.disconnect();
   }, []);
 
-  const handleTabChange = useCallback((tab: Tab) => setActiveTab(tab), []);
+  const tableRef = useRef<HTMLDivElement>(null);
+
+  const handleTabChange = useCallback((tab: Tab) => {
+    setActiveTab(tab);
+    // Smooth scroll to table
+    setTimeout(() => tableRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+  }, []);
+
   const handleCoinSelect = useCallback((id: string) => navigate(`/coin/${id}`), [navigate]);
 
   return (
@@ -65,8 +72,8 @@ export default function Dashboard({ isDark }: DashboardProps) {
 
       {/* Trending + Top Gainers */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
-        <TrendingPanel data={trendingData} isLoading={isLoadingTrending} isDark={isDark} onCoinSelect={handleCoinSelect} />
-        <TopGainersPanel coins={coins} isLoading={isLoading} isDark={isDark} onCoinSelect={handleCoinSelect} />
+        <TrendingPanel data={trendingData} isLoading={isLoadingTrending} isDark={isDark} onCoinSelect={handleCoinSelect} onViewMore={() => handleTabChange('trending')} />
+        <TopGainersPanel coins={coins} isLoading={isLoading} isDark={isDark} onCoinSelect={handleCoinSelect} onViewMore={() => handleTabChange('gainers')} />
       </div>
 
       {/* Filter Tabs + Refresh */}
@@ -115,10 +122,13 @@ export default function Dashboard({ isDark }: DashboardProps) {
       </div>
 
       {/* Market Table */}
-      <div className={cn(
-        'rounded-xl sm:rounded-2xl border transition-colors duration-300 min-h-[400px] sm:min-h-[500px]',
-        isDark ? 'bg-white/3 border-white/8' : 'bg-white border-gray-200 shadow-sm'
-      )}>
+      <div
+        ref={tableRef}
+        className={cn(
+          'rounded-xl sm:rounded-2xl border transition-all duration-300 min-h-[400px] sm:min-h-[500px] scroll-mt-20',
+          isDark ? 'bg-white/3 border-white/8' : 'bg-white border-gray-200 shadow-sm'
+        )}
+      >
         <MarketTable
           coins={coins}
           isLoading={isLoading}
