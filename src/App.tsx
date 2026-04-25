@@ -49,20 +49,20 @@ export default function App() {
         isDark ? 'bg-gray-950/80 border-white/8' : 'bg-white/80 border-gray-200'
       )}>
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-14 sm:h-16 gap-2 sm:gap-3">
+          <div className="flex items-center justify-between h-12 sm:h-16 gap-2 sm:gap-3">
             {/* Logo */}
-            <a href="/" className="flex items-center gap-2 sm:gap-2.5 flex-shrink-0 no-underline">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center shadow-lg shadow-brand-500/30">
-                <BarChart3 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+            <a href="/" className="flex items-center gap-1.5 sm:gap-2.5 flex-shrink-0 no-underline">
+              <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center shadow-lg shadow-brand-500/30">
+                <BarChart3 className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
               </div>
               <div>
-                <h1 className="text-sm sm:text-base font-bold leading-none" style={{ fontFamily: 'var(--font-display)' }}>CryptoSight</h1>
+                <h1 className="text-xs sm:text-base font-bold leading-none" style={{ fontFamily: 'var(--font-display)' }}>CryptoSight</h1>
                 <p className={cn('text-[10px] sm:text-xs leading-none mt-0.5 hidden sm:block', isDark ? 'text-gray-500' : 'text-gray-400')}>Market Intelligence</p>
               </div>
             </a>
 
             {/* Search bar with dropdown — self-contained */}
-            <div className="flex-1 max-w-sm sm:max-w-md">
+            <div className="flex-1 max-w-full sm:max-w-md ml-1 sm:ml-2">
               <SearchBar isDark={isDark} />
             </div>
 

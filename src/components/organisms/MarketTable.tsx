@@ -144,7 +144,7 @@ export function MarketTable({
             ))}
           </div>
         ) : (
-          <div className="divide-y" style={{ borderColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)' }}>
+          <div className={cn('divide-y', isDark ? 'divide-white/5' : 'divide-gray-100')}>
             {paginatedCoins.map((coin, idx) => (
               <MobileCoinCard
                 key={coin.id}

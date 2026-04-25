@@ -12,11 +12,6 @@ import { RefreshCountdown } from '../components/molecules/RefreshCountdown';
 import { cn } from '../utils/cn';
 import { useNavigate } from 'react-router-dom';
 
-// Lazy load ParticleBackground (heavy Three.js dep)
-const ParticleBackground = lazy(() =>
-  import('../components/atoms/ParticleBackground').then(m => ({ default: m.ParticleBackground }))
-);
-
 const FILTER_TABS: { id: Tab; label: string; shortLabel: string; Icon: React.ComponentType<{ className?: string }> }[] = [
   { id: 'all', label: 'All Coins', shortLabel: 'All', Icon: LayoutGrid },
   { id: 'gainers', label: 'Top Gainers', shortLabel: 'Gainers', Icon: TrendingUp },
@@ -55,18 +50,15 @@ export default function Dashboard({ isDark }: DashboardProps) {
   const handleTabChange = useCallback((tab: Tab) => {
     setActiveTab(tab);
     // Smooth scroll to table
-    setTimeout(() => tableRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+    setTimeout(() => tableRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
   }, []);
 
   const handleCoinSelect = useCallback((id: string) => navigate(`/coin/${id}`), [navigate]);
 
   return (
-    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 animate-fade-in">
-      {/* Hero area with particle background */}
+    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 pb-20 sm:pb-8 animate-fade-in">
+      {/* Hero area */}
       <div className="relative">
-        <Suspense fallback={null}>
-          <ParticleBackground isDark={isDark} />
-        </Suspense>
         <GlobalStatsBar data={globalData} isLoading={isLoadingGlobal} isDark={isDark} />
       </div>
 
