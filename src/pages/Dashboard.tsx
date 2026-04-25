@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect, Suspense, lazy } from 'react';
 import { LayoutGrid, Star, TrendingUp, TrendingDown, Flame } from 'lucide-react';
 import type { Tab } from '../types/coin';
 import { useMarketData } from '../hooks/useMarketData';
@@ -12,79 +12,102 @@ import { RefreshCountdown } from '../components/molecules/RefreshCountdown';
 import { cn } from '../utils/cn';
 import { useNavigate } from 'react-router-dom';
 
-const FILTER_TABS: { id: Tab; label: string; Icon: React.ComponentType<{ className?: string }> }[] = [
-  { id: 'all', label: 'All', Icon: LayoutGrid },
-  { id: 'gainers', label: 'Top Gainers', Icon: TrendingUp },
-  { id: 'losers', label: 'Top Losers', Icon: TrendingDown },
-  { id: 'trending', label: 'Trending', Icon: Flame },
-  { id: 'watchlist', label: 'Watchlist', Icon: Star },
+// Lazy load ParticleBackground (heavy Three.js dep)
+const ParticleBackground = lazy(() =>
+  import('../components/atoms/ParticleBackground').then(m => ({ default: m.ParticleBackground }))
+);
+
+const FILTER_TABS: { id: Tab; label: string; shortLabel: string; Icon: React.ComponentType<{ className?: string }> }[] = [
+  { id: 'all', label: 'All Coins', shortLabel: 'All', Icon: LayoutGrid },
+  { id: 'gainers', label: 'Top Gainers', shortLabel: 'Gainers', Icon: TrendingUp },
+  { id: 'losers', label: 'Top Losers', shortLabel: 'Losers', Icon: TrendingDown },
+  { id: 'trending', label: 'Trending', shortLabel: 'Trend', Icon: Flame },
+  { id: 'watchlist', label: 'Watchlist', shortLabel: 'Watch', Icon: Star },
 ];
 
 interface DashboardProps {
   isDark: boolean;
-  searchQuery: string;
 }
 
-export default function Dashboard({ isDark, searchQuery }: DashboardProps) {
+export default function Dashboard({ isDark }: DashboardProps) {
   const navigate = useNavigate();
-  
+  const tabsRef = useRef<HTMLDivElement>(null);
+  const [showScrollHint, setShowScrollHint] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>('all');
 
   const { coins, isLoading, isRefreshing, error, lastUpdated, refetch, secondsUntilRefresh } = useMarketData(1);
   const { data: globalData, isLoading: isLoadingGlobal } = useGlobalData();
   const { data: trendingData, isLoading: isLoadingTrending } = useTrending();
 
-  const handleTabChange = useCallback((tab: Tab) => {
-    setActiveTab(tab);
+  // Check if tabs overflow
+  useEffect(() => {
+    const el = tabsRef.current;
+    if (!el) return;
+    const check = () => setShowScrollHint(el.scrollWidth > el.clientWidth + 4);
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => ro.disconnect();
   }, []);
 
-  const handleCoinSelect = useCallback((id: string) => {
-    navigate(`/coin/${id}`);
-  }, [navigate]);
+  const handleTabChange = useCallback((tab: Tab) => setActiveTab(tab), []);
+  const handleCoinSelect = useCallback((id: string) => navigate(`/coin/${id}`), [navigate]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 animate-fade-in">
-      {/* Global Stats Banner */}
-      <GlobalStatsBar data={globalData} isLoading={isLoadingGlobal} isDark={isDark} />
+    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 animate-fade-in">
+      {/* Hero area with particle background */}
+      <div className="relative">
+        <Suspense fallback={null}>
+          <ParticleBackground isDark={isDark} />
+        </Suspense>
+        <GlobalStatsBar data={globalData} isLoading={isLoadingGlobal} isDark={isDark} />
+      </div>
 
-      {/* Trending + Top Gainers panels */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+      {/* Trending + Top Gainers */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
         <TrendingPanel data={trendingData} isLoading={isLoadingTrending} isDark={isDark} onCoinSelect={handleCoinSelect} />
         <TopGainersPanel coins={coins} isLoading={isLoading} isDark={isDark} onCoinSelect={handleCoinSelect} />
       </div>
 
-      {/* Filter Tabs + last updated + refresh countdown */}
-      <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between mb-4">
-        <div
-          className={cn('flex rounded-xl p-1 gap-1 border overflow-x-auto', isDark ? 'bg-white/5 border-white/8' : 'bg-gray-100 border-gray-200')}
-          role="tablist"
-          aria-label="Market filter tabs"
-        >
-          {FILTER_TABS.map(({ id, label, Icon }) => (
-            <button
-              key={id}
-              role="tab"
-              aria-selected={activeTab === id}
-              onClick={() => handleTabChange(id)}
-              className={cn(
-                'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap',
-                'transition-all duration-150 cursor-pointer',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400',
-                activeTab === id
-                  ? 'bg-brand-500 text-white shadow-md shadow-brand-500/25'
-                  : isDark ? 'text-gray-400 hover:text-white hover:bg-white/5' : 'text-gray-500 hover:text-gray-900 hover:bg-white'
-              )}
-            >
-              <Icon className="w-3.5 h-3.5" />
-              {label}
-            </button>
-          ))}
+      {/* Filter Tabs + Refresh */}
+      <div className="flex items-center gap-2 sm:gap-3 justify-between mb-3 sm:mb-4">
+        <div className={cn('relative flex-1 min-w-0', showScrollHint && 'scroll-fade')}>
+          <div
+            ref={tabsRef}
+            className={cn(
+              'scroll-container flex rounded-xl p-1 gap-1 border',
+              isDark ? 'bg-white/5 border-white/8' : 'bg-gray-100 border-gray-200'
+            )}
+            role="tablist"
+            aria-label="Market filter tabs"
+          >
+            {FILTER_TABS.map(({ id, shortLabel, label, Icon }) => (
+              <button
+                key={id}
+                role="tab"
+                aria-selected={activeTab === id}
+                onClick={() => handleTabChange(id)}
+                className={cn(
+                  'flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap',
+                  'transition-all duration-150 cursor-pointer',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400',
+                  activeTab === id
+                    ? 'bg-brand-500 text-white shadow-md shadow-brand-500/25'
+                    : isDark ? 'text-gray-400 hover:text-white hover:bg-white/5' : 'text-gray-500 hover:text-gray-900 hover:bg-white'
+                )}
+              >
+                <Icon className="w-3.5 h-3.5 flex-shrink-0" />
+                <span className="sm:hidden">{shortLabel}</span>
+                <span className="hidden sm:inline">{label}</span>
+              </button>
+            ))}
+          </div>
         </div>
 
-        <div className="flex items-center gap-4 flex-shrink-0">
+        <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
           <RefreshCountdown secondsRemaining={secondsUntilRefresh} totalSeconds={60} isRefreshing={isRefreshing} isDark={isDark} />
           {lastUpdated && (
-            <p className={cn('text-xs flex-shrink-0 hidden sm:block', isDark ? 'text-gray-500' : 'text-gray-400')}>
+            <p className={cn('text-xs flex-shrink-0 hidden lg:block', isDark ? 'text-gray-500' : 'text-gray-400')}>
               Updated: {lastUpdated.toLocaleTimeString()}
             </p>
           )}
@@ -92,12 +115,14 @@ export default function Dashboard({ isDark, searchQuery }: DashboardProps) {
       </div>
 
       {/* Market Table */}
-      <div className={cn('rounded-2xl border transition-colors duration-300 min-h-[500px]', isDark ? 'bg-white/3 border-white/8' : 'bg-white border-gray-200 shadow-sm')}>
+      <div className={cn(
+        'rounded-xl sm:rounded-2xl border transition-colors duration-300 min-h-[400px] sm:min-h-[500px]',
+        isDark ? 'bg-white/3 border-white/8' : 'bg-white border-gray-200 shadow-sm'
+      )}>
         <MarketTable
           coins={coins}
           isLoading={isLoading}
           error={error}
-          searchQuery={searchQuery}
           onCoinSelect={(coin) => handleCoinSelect(coin.id)}
           onRetry={refetch}
           activeTab={activeTab}

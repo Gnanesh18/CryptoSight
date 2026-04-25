@@ -2,23 +2,65 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Real-time cryptocurrency market intelligence dashboard. Track top 100 coins, prices, 24h changes, market caps, and build your personal watchlist." />
-    <meta name="theme-color" content="#0f0f14" />
-    <title>CryptoSight — Real-Time Market Intelligence</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
-    <!-- Preconnect to external origins for faster loading -->
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+
+    <!-- SEO Core -->
+    <title>CryptoSight — Real-Time Crypto Market Dashboard</title>
+    <meta name="description" content="Track real-time cryptocurrency prices, market caps, 24h volume, and trends. Monitor top 100 coins with interactive charts, watchlists, and global market analytics." />
+    <meta name="keywords" content="cryptocurrency, bitcoin, ethereum, crypto tracker, market cap, price chart, real-time, dashboard, CoinGecko" />
+    <meta name="author" content="CryptoSight" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://cryptosight.app/" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="CryptoSight — Real-Time Crypto Market Dashboard" />
+    <meta property="og:description" content="Track real-time cryptocurrency prices, market caps, and trends. Interactive charts, watchlists, and global market analytics." />
+    <meta property="og:url" content="https://cryptosight.app/" />
+    <meta property="og:site_name" content="CryptoSight" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="CryptoSight — Real-Time Crypto Market Dashboard" />
+    <meta name="twitter:description" content="Track real-time cryptocurrency prices, market caps, and trends." />
+
+    <!-- Theme -->
+    <meta name="theme-color" content="#0a0a0f" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)" />
+    <meta name="color-scheme" content="dark light" />
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- Preconnect to external origins -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://api.coingecko.com" />
 
-    <!-- Non-blocking font loading (replaces render-blocking CSS @import) -->
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" media="print" onload="this.media='all'" />
+    <!-- Non-blocking font loading: Sora (headings) + Plus Jakarta Sans (body) -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'" />
     <noscript>
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" />
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" />
     </noscript>
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "CryptoSight",
+      "description": "Real-time cryptocurrency market intelligence dashboard",
+      "url": "https://cryptosight.app/",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "All"
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>

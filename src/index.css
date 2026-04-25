@@ -1,14 +1,14 @@
 /* ============================================================
-   CSS custom properties — consumed by Tailwind's @theme layer
+   CryptoSight Design System
+   Fonts: Sora (display) + Plus Jakarta Sans (body)
    ============================================================ */
-/* Google Fonts loaded via <link> in index.html for non-blocking performance */
 
 @import "tailwindcss";
 
 @theme {
   /* Typography */
-  --font-display: 'Space Grotesk', sans-serif;
-  --font-body: 'Inter', sans-serif;
+  --font-display: 'Sora', system-ui, sans-serif;
+  --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
 
   /* Brand palette */
   --color-brand-500: oklch(65% 0.22 260);
@@ -28,21 +28,54 @@
 
 :root {
   color-scheme: light dark;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
 }
 
 html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 body {
   font-family: var(--font-body);
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
+  padding-left: var(--safe-left);
+  padding-right: var(--safe-right);
 }
 
-/* ---------- Dark mode handled via .dark class on <html> ---------- */
+/* ---------- Horizontal scroll container ---------- */
+.scroll-container {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scroll-container::-webkit-scrollbar { display: none; }
+
+.scroll-fade {
+  mask-image: linear-gradient(to right, transparent 0, black 8px, black calc(100% - 24px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0, black 8px, black calc(100% - 24px), transparent 100%);
+}
+
+/* ---------- Glass card utility ---------- */
+.glass-card {
+  background: oklch(100% 0 0 / 0.03);
+  border: 1px solid oklch(100% 0 0 / 0.06);
+  backdrop-filter: blur(12px);
+}
+.light .glass-card,
+:root:not(.dark) .glass-card {
+  background: oklch(100% 0 0 / 0.8);
+  border-color: oklch(0% 0 0 / 0.06);
+}
 
 /* ---------- Animations ---------- */
 @keyframes shimmer {
@@ -81,24 +114,17 @@ body {
 }
 
 .animate-shimmer {
-  background: linear-gradient(
-    90deg,
-    transparent 25%,
-    oklch(100% 0 0 / 0.08) 50%,
-    transparent 75%
-  );
+  background: linear-gradient(90deg, transparent 25%, oklch(100% 0 0 / 0.08) 50%, transparent 75%);
   background-size: 200% 100%;
   animation: shimmer 1.6s ease-in-out infinite;
 }
 
 .animate-flash-green { animation: flash-green 0.8s ease-out forwards; }
 .animate-flash-red   { animation: flash-red   0.8s ease-out forwards; }
-
 .animate-slide-in-right { animation: slide-in-right 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 .animate-fade-in        { animation: fade-in        0.2s ease-out forwards; }
 .animate-slide-up       { animation: slide-up       0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
-/* Progress bar animation driven by CSS custom property */
 .countdown-bar {
   animation: count-down linear forwards;
   animation-duration: var(--countdown-duration, 60s);
@@ -108,3 +134,12 @@ body {
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: oklch(60% 0 0 / 0.3); border-radius: 3px; }
+
+/* ---------- Mobile table ---------- */
+@media (max-width: 639px) {
+  .mobile-compact td,
+  .mobile-compact th {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+}

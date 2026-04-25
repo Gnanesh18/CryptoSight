@@ -1,7 +1,6 @@
 import { memo, useRef, useEffect, useState } from 'react';
 import { TrendingUp, TrendingDown, Star } from 'lucide-react';
 import type { Coin } from '../../types/coin';
-import { Badge } from '../atoms/Badge';
 import { useWatchlistStore } from '../../store/useWatchlistStore';
 import { formatCurrency, formatLargeNumber, formatPercent } from '../../utils/formatters';
 import { cn } from '../../utils/cn';
@@ -25,42 +24,35 @@ export const CoinRow = memo(function CoinRow({ coin, onSelect, isDark = true }: 
 
   useEffect(() => {
     if (prevPriceRef.current !== coin.current_price) {
-      const direction = coin.current_price > prevPriceRef.current ? 'flash-green' : 'flash-red';
-      setFlashClass(`animate-${direction}`);
-      const timer = setTimeout(() => setFlashClass(''), 900);
+      setFlashClass(coin.current_price > prevPriceRef.current ? 'animate-flash-green' : 'animate-flash-red');
+      const t = setTimeout(() => setFlashClass(''), 900);
       prevPriceRef.current = coin.current_price;
-      return () => clearTimeout(timer);
+      return () => clearTimeout(t);
     }
   }, [coin.current_price]);
-
-  const handleStarClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    toggle(coin.id);
-  };
 
   return (
     <tr
       onClick={() => onSelect(coin)}
+      onKeyDown={(e) => e.key === 'Enter' && onSelect(coin)}
+      tabIndex={0}
+      aria-label={`View details for ${coin.name}`}
       className={cn(
-        'group relative cursor-pointer',
-        'border-b last:border-none',
-        isDark ? 'border-white/5' : 'border-gray-100',
-        'transition-colors duration-150',
-        isDark ? 'hover:bg-white/4' : 'hover:bg-gray-50',
+        'group cursor-pointer border-b last:border-none transition-colors duration-150',
+        isDark ? 'border-white/5 hover:bg-white/[0.03]' : 'border-gray-100 hover:bg-gray-50/70',
         flashClass
       )}
-      tabIndex={0}
-      onKeyDown={(e) => e.key === 'Enter' && onSelect(coin)}
-      aria-label={`View details for ${coin.name}`}
     >
       {/* Rank */}
-      <td className="py-4 pl-4 pr-2 w-12">
-        <span className={cn('text-xs font-mono', isDark ? 'text-gray-500' : 'text-gray-400')}>{coin.market_cap_rank}</span>
+      <td className="py-4 pl-5 pr-3 w-10">
+        <span className={cn('text-xs font-mono tabular-nums', isDark ? 'text-gray-500' : 'text-gray-400')}>
+          {coin.market_cap_rank}
+        </span>
       </td>
 
       {/* Asset */}
       <td className="py-4 px-3">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 min-w-0">
           <img
             src={coin.image}
             alt={`${coin.name} logo`}
@@ -72,43 +64,52 @@ export const CoinRow = memo(function CoinRow({ coin, onSelect, isDark = true }: 
               (e.target as HTMLImageElement).src = `https://placehold.co/32x32/1e293b/94a3b8?text=${coin.symbol[0]}`;
             }}
           />
-          <div>
-            <p className={cn('text-sm font-semibold leading-tight', isDark ? 'text-white' : 'text-gray-900')}>{coin.name}</p>
-            <p className={cn('text-xs uppercase font-mono', isDark ? 'text-gray-500' : 'text-gray-400')}>{coin.symbol}</p>
+          <div className="min-w-0">
+            <p className={cn('text-sm font-semibold leading-tight truncate', isDark ? 'text-white' : 'text-gray-900')}>
+              {coin.name}
+            </p>
+            <p className={cn('text-xs uppercase font-mono tracking-wide', isDark ? 'text-gray-500' : 'text-gray-400')}>
+              {coin.symbol}
+            </p>
           </div>
         </div>
       </td>
 
       {/* Price */}
       <td className="py-4 px-3 text-right">
-        <span className={cn('text-sm font-semibold tabular-nums', isDark ? 'text-white' : 'text-gray-900')}>
+        <span className={cn('text-sm font-bold tabular-nums', isDark ? 'text-white' : 'text-gray-900')}>
           {formatCurrency(coin.current_price)}
         </span>
       </td>
 
-      {/* 1h Change */}
+      {/* 1h */}
       <td className="py-4 px-3 text-right hidden xl:table-cell">
-        <span className={cn('text-xs font-medium', is1hPositive ? 'text-success-400' : 'text-danger-400')}>
+        <span className={cn('text-xs font-semibold tabular-nums', is1hPositive ? 'text-success-400' : 'text-danger-400')}>
           {coin.price_change_percentage_1h_in_currency != null
             ? formatPercent(coin.price_change_percentage_1h_in_currency)
             : '—'}
         </span>
       </td>
 
-      {/* 24h Change */}
+      {/* 24h */}
       <td className="py-4 px-3 text-right">
-        <Badge variant={isPositive ? 'success' : 'danger'}>
+        <span className={cn(
+          'inline-flex items-center gap-1 text-xs font-semibold tabular-nums px-2 py-0.5 rounded-full',
+          isPositive
+            ? isDark ? 'text-success-400 bg-success-500/10' : 'text-emerald-700 bg-emerald-50'
+            : isDark ? 'text-danger-400 bg-danger-500/10' : 'text-red-700 bg-red-50'
+        )}>
           {isPositive
-            ? <TrendingUp className="w-3 h-3" aria-hidden="true" />
-            : <TrendingDown className="w-3 h-3" aria-hidden="true" />
+            ? <TrendingUp className="w-2.5 h-2.5" aria-hidden="true" />
+            : <TrendingDown className="w-2.5 h-2.5" aria-hidden="true" />
           }
           {formatPercent(coin.price_change_percentage_24h)}
-        </Badge>
+        </span>
       </td>
 
-      {/* 7d Change */}
+      {/* 7d */}
       <td className="py-4 px-3 text-right hidden lg:table-cell">
-        <span className={cn('text-xs font-medium', is7dPositive ? 'text-success-400' : 'text-danger-400')}>
+        <span className={cn('text-xs font-semibold tabular-nums', is7dPositive ? 'text-success-400' : 'text-danger-400')}>
           {coin.price_change_percentage_7d_in_currency != null
             ? formatPercent(coin.price_change_percentage_7d_in_currency)
             : '—'}
@@ -116,13 +117,13 @@ export const CoinRow = memo(function CoinRow({ coin, onSelect, isDark = true }: 
       </td>
 
       {/* Market Cap */}
-      <td className="py-4 px-3 text-right hidden sm:table-cell">
-        <span className={cn('text-sm tabular-nums', isDark ? 'text-gray-300' : 'text-gray-600')}>
+      <td className="py-4 px-3 text-right">
+        <span className={cn('text-sm tabular-nums font-medium', isDark ? 'text-gray-300' : 'text-gray-600')}>
           {formatLargeNumber(coin.market_cap, '$')}
         </span>
       </td>
 
-      {/* 24h Volume */}
+      {/* Volume */}
       <td className="py-4 px-3 text-right hidden lg:table-cell">
         <span className={cn('text-sm tabular-nums', isDark ? 'text-gray-400' : 'text-gray-500')}>
           {formatLargeNumber(coin.total_volume, '$')}
@@ -132,20 +133,15 @@ export const CoinRow = memo(function CoinRow({ coin, onSelect, isDark = true }: 
       {/* Sparkline */}
       <td className="py-4 px-3 hidden lg:table-cell">
         {coin.sparkline_in_7d?.price && (
-          <SparklineChart
-            prices={coin.sparkline_in_7d.price}
-            positive={is7dPositive}
-            width={100}
-            height={36}
-          />
+          <SparklineChart prices={coin.sparkline_in_7d.price} positive={is7dPositive} width={96} height={32} />
         )}
       </td>
 
-      {/* Star / Watchlist */}
-      <td className="py-4 pl-3 pr-4 w-10">
+      {/* Star */}
+      <td className="py-4 pl-3 pr-5 w-10">
         <button
           type="button"
-          onClick={handleStarClick}
+          onClick={(e) => { e.stopPropagation(); toggle(coin.id); }}
           aria-label={watched ? `Remove ${coin.name} from watchlist` : `Add ${coin.name} to watchlist`}
           aria-pressed={watched}
           className={cn(
@@ -154,11 +150,11 @@ export const CoinRow = memo(function CoinRow({ coin, onSelect, isDark = true }: 
             watched
               ? 'text-warning-400'
               : isDark
-                ? 'text-gray-600 hover:text-gray-400 hover:bg-white/10 opacity-0 group-hover:opacity-100'
-                : 'text-gray-300 hover:text-gray-500 hover:bg-gray-100 opacity-0 group-hover:opacity-100'
+                ? 'text-gray-600 opacity-0 group-hover:opacity-100 hover:text-gray-300 hover:bg-white/8'
+                : 'text-gray-300 opacity-0 group-hover:opacity-100 hover:text-gray-600 hover:bg-gray-100'
           )}
         >
-          <Star className="w-4 h-4" fill={watched ? 'currentColor' : 'none'} aria-hidden="true" />
+          <Star className="w-3.5 h-3.5" fill={watched ? 'currentColor' : 'none'} aria-hidden="true" />
         </button>
       </td>
     </tr>
