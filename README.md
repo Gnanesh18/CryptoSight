@@ -1,10 +1,10 @@
 <div align="center">
 
-<img src="./public/favicon.svg" width="72" height="72" alt="CryptoSight Logo" />
+<img src="./public/favicon.svg" width="80" height="80" alt="CryptoSight Logo" />
 
-# CryptoSight
+<h1>CryptoSight</h1>
 
-### Real-Time Cryptocurrency Market Intelligence
+<h3>Real-Time Cryptocurrency Market Intelligence</h3>
 
 [![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
@@ -12,15 +12,73 @@
 [![Vite](https://img.shields.io/badge/Vite-8-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vite.dev)
 [![License: MIT](https://img.shields.io/badge/License-MIT-22c55e?style=flat-square)](LICENSE)
 
-**Track prices · Analyze trends · Build your watchlist**
+<p><strong>Track prices · Analyze trends · Build your watchlist</strong></p>
 
-[Live Demo](https://crypto-sight-five.vercel.app/) · [Report a Bug](https://github.com/Gnanesh18/CryptoSight/issues) · [Request a Feature](https://github.com/Gnanesh18/CryptoSight/issues)
+<br/>
+
+<a href="https://crypto-sight-five.vercel.app/">
+  <img src="https://img.shields.io/badge/🚀%20LIVE%20DEMO-Visit%20CryptoSight-6366f1?style=for-the-badge&logoColor=white" alt="Live Demo" height="48" />
+</a>
+&nbsp;&nbsp;
+<a href="https://github.com/Gnanesh18/CryptoSight/issues">
+  <img src="https://img.shields.io/badge/🐛%20Report%20Bug-GitHub%20Issues-ef4444?style=for-the-badge" alt="Report a Bug" height="48" />
+</a>
+&nbsp;&nbsp;
+<a href="https://github.com/Gnanesh18/CryptoSight/issues">
+  <img src="https://img.shields.io/badge/✨%20Request%20Feature-GitHub%20Issues-22c55e?style=for-the-badge" alt="Request a Feature" height="48" />
+</a>
+
+<br/><br/>
+
+</div>
 
 ---
 
-![CryptoSight Dashboard Preview](./public/preview.png)
+## 📸 Screenshots
 
-</div>
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="https://github.com/user-attachments/assets/f28758b9-8931-47d8-a8b9-31a15e0e2e4b" alt="Dashboard View" width="100%" />
+      <br/><sub><b>Dashboard — Market Overview</b></sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="https://github.com/user-attachments/assets/5dc073c9-6c34-4993-8e3b-bdb13d6ab543" alt="Chart View" width="100%" />
+      <br/><sub><b>Interactive Price Charts</b></sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <img src="https://github.com/user-attachments/assets/b553c5e6-879c-455f-8989-90105c91c9c3" alt="Coin Detail" width="100%" />
+      <br/><sub><b>Coin Detail Page</b></sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="https://github.com/user-attachments/assets/f8542353-f5d5-4bb3-b866-62a042dde013" alt="Watchlist" width="100%" />
+      <br/><sub><b>Watchlist & Trending</b></sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" colspan="2">
+      <img src="https://github.com/user-attachments/assets/7ded8e23-2d6c-4ad1-b17d-6fc29e6c6d02" alt="Dark Mode" width="50%" />
+      <br/><sub><b>Dark Mode Support</b></sub>
+    </td>
+  </tr>
+</table>
+
+### 📱 Mobile Experience
+
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="https://github.com/user-attachments/assets/a3bc4b69-f916-4f0e-8066-8203e9784e6d" alt="Mobile View 1" width="320" />
+      <br/><sub><b>Mobile — Market List</b></sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="https://github.com/user-attachments/assets/dec1c34b-d0ae-4505-88cd-06f5a070681f" alt="Mobile View 2" width="320" />
+      <br/><sub><b>Mobile — Coin Detail</b></sub>
+    </td>
+  </tr>
+</table>
 
 ---
 
@@ -34,17 +92,17 @@ CryptoSight is a production-ready cryptocurrency market dashboard that delivers 
 
 | Feature | Description |
 |---|---|
-| **Live Market Data** | Real-time prices, market caps, and 24h volumes with 60-second auto-refresh |
-| **Interactive Charts** | SVG price charts with crosshair tooltips, volume bars, and multiple timeframes (24H → Max) |
-| **Global Market Stats** | Total market cap, BTC/ETH dominance, 24h volume, and active coin count at a glance |
-| **Coin Detail Pages** | Full-page routes with market stats, ATH/ATL records, supply data, exchange tickers, and sentiment |
-| **Top Gainers & Trending** | Dedicated panels surfacing top 24h performers and CoinGecko's trending coins |
-| **Smart Search** | Debounced live search with instant dropdown results — navigate to any coin in milliseconds |
-| **Watchlist** | Star coins and persist your favourites across sessions via `localStorage` |
-| **Dark / Light Mode** | First-class theme support with smooth transitions and OS preference detection |
-| **Sparkline Charts** | Inline 7-day mini-charts on every row for rapid trend scanning |
-| **Price Flash Animations** | Green/red row flash on live price updates for instant visual feedback |
-| **Mobile First** | Native-feel layouts from 375px upward — no functionality locked behind desktop |
+| 📡 **Live Market Data** | Real-time prices, market caps, and 24h volumes with 60-second auto-refresh |
+| 📈 **Interactive Charts** | SVG price charts with crosshair tooltips, volume bars, and multiple timeframes (24H → Max) |
+| 🌍 **Global Market Stats** | Total market cap, BTC/ETH dominance, 24h volume, and active coin count at a glance |
+| 🔍 **Coin Detail Pages** | Full-page routes with market stats, ATH/ATL records, supply data, exchange tickers, and sentiment |
+| 🚀 **Top Gainers & Trending** | Dedicated panels surfacing top 24h performers and CoinGecko's trending coins |
+| 🔎 **Smart Search** | Debounced live search with instant dropdown results — navigate to any coin in milliseconds |
+| ⭐ **Watchlist** | Star coins and persist your favourites across sessions via `localStorage` |
+| 🌗 **Dark / Light Mode** | First-class theme support with smooth transitions and OS preference detection |
+| ⚡ **Sparkline Charts** | Inline 7-day mini-charts on every row for rapid trend scanning |
+| 🟢 **Price Flash Animations** | Green/red row flash on live price updates for instant visual feedback |
+| 📱 **Mobile First** | Native-feel layouts from 375px upward — no functionality locked behind desktop |
 
 ---
 
@@ -134,12 +192,12 @@ VITE_COINGECKO_API_KEY=your_demo_key_here                   # optional, raises r
 
 ## 📜 Scripts
 
-```bash
-npm run dev       # Start Vite dev server (HMR enabled)
-npm run build     # TypeScript check + optimised production build
-npm run preview   # Serve the production build locally
-npm run lint      # Run ESLint across all TS/TSX files
-```
+| Command | Description |
+|---|---|
+| `npm run dev` | Start Vite dev server with HMR enabled |
+| `npm run build` | TypeScript check + optimised production build |
+| `npm run preview` | Serve the production build locally |
+| `npm run lint` | Run ESLint across all TS/TSX files |
 
 ---
 
@@ -207,6 +265,12 @@ Distributed under the **MIT License**. See [`LICENSE`](LICENSE) for details.
 
 <div align="center">
 
-Built with ☕ and [CoinGecko](https://www.coingecko.com) data · Market data is for informational purposes only
+Built with ☕ and [CoinGecko](https://www.coingecko.com) data
+
+<sub>Market data is for informational purposes only · Not financial advice</sub>
+
+<br/><br/>
+
+⭐ **If you find this useful, consider starring the repo!** ⭐
 
 </div>
