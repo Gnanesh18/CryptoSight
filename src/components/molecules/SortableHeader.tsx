@@ -10,6 +10,7 @@ interface SortableHeaderProps {
   onSort: (field: SortField) => void;
   className?: string;
   align?: 'left' | 'right';
+  isDark?: boolean;
 }
 
 /**
@@ -24,6 +25,7 @@ export function SortableHeader({
   onSort,
   className,
   align = 'left',
+  isDark = true,
 }: SortableHeaderProps) {
   const isActive = currentField === field;
 
@@ -41,7 +43,11 @@ export function SortableHeader({
       className={cn(
         'group flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider',
         'transition-colors duration-150 cursor-pointer',
-        isActive ? 'text-brand-400' : 'text-gray-500 hover:text-gray-300',
+        isActive
+          ? 'text-brand-400'
+          : isDark
+            ? 'text-gray-500 hover:text-gray-300'
+            : 'text-gray-400 hover:text-gray-600',
         align === 'right' && 'ml-auto',
         className
       )}

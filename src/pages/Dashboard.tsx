@@ -10,7 +10,7 @@ import { TrendingPanel } from '../components/organisms/TrendingPanel';
 import { TopGainersPanel } from '../components/organisms/TopGainersPanel';
 import { RefreshCountdown } from '../components/molecules/RefreshCountdown';
 import { cn } from '../utils/cn';
-import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const FILTER_TABS: { id: Tab; label: string; Icon: React.ComponentType<{ className?: string }> }[] = [
   { id: 'all', label: 'All', Icon: LayoutGrid },
@@ -53,7 +53,7 @@ export default function Dashboard({ isDark, searchQuery }: DashboardProps) {
         <TopGainersPanel coins={coins} isLoading={isLoading} isDark={isDark} onCoinSelect={handleCoinSelect} />
       </div>
 
-      {/* Filter Tabs + last updated */}
+      {/* Filter Tabs + last updated + refresh countdown */}
       <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between mb-4">
         <div
           className={cn('flex rounded-xl p-1 gap-1 border overflow-x-auto', isDark ? 'bg-white/5 border-white/8' : 'bg-gray-100 border-gray-200')}
@@ -81,11 +81,14 @@ export default function Dashboard({ isDark, searchQuery }: DashboardProps) {
           ))}
         </div>
 
-        {lastUpdated && (
-          <p className={cn('text-xs flex-shrink-0', isDark ? 'text-gray-500' : 'text-gray-400')}>
-            Updated: {lastUpdated.toLocaleTimeString()}
-          </p>
-        )}
+        <div className="flex items-center gap-4 flex-shrink-0">
+          <RefreshCountdown secondsRemaining={secondsUntilRefresh} totalSeconds={60} isRefreshing={isRefreshing} isDark={isDark} />
+          {lastUpdated && (
+            <p className={cn('text-xs flex-shrink-0 hidden sm:block', isDark ? 'text-gray-500' : 'text-gray-400')}>
+              Updated: {lastUpdated.toLocaleTimeString()}
+            </p>
+          )}
+        </div>
       </div>
 
       {/* Market Table */}
@@ -98,12 +101,8 @@ export default function Dashboard({ isDark, searchQuery }: DashboardProps) {
           onCoinSelect={(coin) => handleCoinSelect(coin.id)}
           onRetry={refetch}
           activeTab={activeTab}
+          isDark={isDark}
         />
-      </div>
-
-      {/* Mobile refresh countdown */}
-      <div className="sm:hidden flex justify-center mt-4">
-        <RefreshCountdown secondsRemaining={secondsUntilRefresh} totalSeconds={60} isRefreshing={isRefreshing} />
       </div>
     </div>
   );

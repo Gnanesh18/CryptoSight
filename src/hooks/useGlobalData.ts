@@ -1,23 +1,21 @@
-import { useState, useEffect, useRef } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { fetchGlobalData } from '../services/coingecko';
 import type { GlobalData } from '../types/coin';
 
+/**
+ * Fetches global crypto market data.
+ * Cached and automatically revalidated by React Query.
+ */
 export function useGlobalData() {
-  const [data, setData] = useState<GlobalData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const mountedRef = useRef(true);
+  const { data, isLoading, error } = useQuery<GlobalData, Error>({
+    queryKey: ['market', 'global'],
+    queryFn: fetchGlobalData,
+    staleTime: 60_000, // Global data changes slowly — stay fresh longer
+  });
 
-  useEffect(() => {
-    mountedRef.current = true;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsLoading(true);
-    fetchGlobalData()
-      .then((d) => { if (mountedRef.current) { setData(d); setError(null); } })
-      .catch((e) => { if (mountedRef.current) setError((e as Error).message); })
-      .finally(() => { if (mountedRef.current) setIsLoading(false); });
-    return () => { mountedRef.current = false; };
-  }, []);
-
-  return { data, isLoading, error };
+  return {
+    data: data ?? null,
+    isLoading,
+    error: error?.message ?? null,
+  };
 }

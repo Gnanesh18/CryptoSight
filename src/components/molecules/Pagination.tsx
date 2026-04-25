@@ -5,13 +5,14 @@ interface PaginationProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  isDark?: boolean;
 }
 
 /**
  * Page-based pagination control.
  * Shows prev/next arrows and page numbers with ellipsis for large page counts.
  */
-export function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
+export function Pagination({ currentPage, totalPages, onPageChange, isDark = true }: PaginationProps) {
   if (totalPages <= 1) return null;
 
   const pages = buildPageArray(currentPage, totalPages);
@@ -28,7 +29,9 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
         aria-label="Previous page"
         className={cn(
           'p-2 rounded-lg text-sm font-medium transition-colors duration-150',
-          'hover:bg-white/8 text-gray-400 hover:text-white',
+          isDark
+            ? 'hover:bg-white/8 text-gray-400 hover:text-white'
+            : 'hover:bg-gray-100 text-gray-500 hover:text-gray-900',
           'disabled:opacity-30 disabled:cursor-not-allowed',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400'
         )}
@@ -38,7 +41,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
 
       {pages.map((page, idx) =>
         page === '...' ? (
-          <span key={`ellipsis-${idx}`} className="px-2 text-gray-600 text-sm">
+          <span key={`ellipsis-${idx}`} className={cn('px-2 text-sm', isDark ? 'text-gray-600' : 'text-gray-400')}>
             …
           </span>
         ) : (
@@ -53,7 +56,9 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400',
               currentPage === page
                 ? 'bg-brand-500 text-white shadow-lg shadow-brand-500/25'
-                : 'text-gray-400 hover:text-white hover:bg-white/8'
+                : isDark
+                  ? 'text-gray-400 hover:text-white hover:bg-white/8'
+                  : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
             )}
           >
             {page}
@@ -68,7 +73,9 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
         aria-label="Next page"
         className={cn(
           'p-2 rounded-lg text-sm font-medium transition-colors duration-150',
-          'hover:bg-white/8 text-gray-400 hover:text-white',
+          isDark
+            ? 'hover:bg-white/8 text-gray-400 hover:text-white'
+            : 'hover:bg-gray-100 text-gray-500 hover:text-gray-900',
           'disabled:opacity-30 disabled:cursor-not-allowed',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400'
         )}

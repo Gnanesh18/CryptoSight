@@ -10,9 +10,10 @@ import { SparklineChart } from '../molecules/SparklineChart';
 interface CoinRowProps {
   coin: Coin;
   onSelect: (coin: Coin) => void;
+  isDark?: boolean;
 }
 
-export const CoinRow = memo(function CoinRow({ coin, onSelect }: CoinRowProps) {
+export const CoinRow = memo(function CoinRow({ coin, onSelect, isDark = true }: CoinRowProps) {
   const { toggle, isWatched } = useWatchlistStore();
   const watched = isWatched(coin.id);
   const isPositive = coin.price_change_percentage_24h >= 0;
@@ -42,9 +43,10 @@ export const CoinRow = memo(function CoinRow({ coin, onSelect }: CoinRowProps) {
       onClick={() => onSelect(coin)}
       className={cn(
         'group relative cursor-pointer',
-        'border-b border-white/5 last:border-none',
+        'border-b last:border-none',
+        isDark ? 'border-white/5' : 'border-gray-100',
         'transition-colors duration-150',
-        'hover:bg-white/4',
+        isDark ? 'hover:bg-white/4' : 'hover:bg-gray-50',
         flashClass
       )}
       tabIndex={0}
@@ -53,7 +55,7 @@ export const CoinRow = memo(function CoinRow({ coin, onSelect }: CoinRowProps) {
     >
       {/* Rank */}
       <td className="py-4 pl-4 pr-2 w-12">
-        <span className="text-xs text-gray-500 font-mono">{coin.market_cap_rank}</span>
+        <span className={cn('text-xs font-mono', isDark ? 'text-gray-500' : 'text-gray-400')}>{coin.market_cap_rank}</span>
       </td>
 
       {/* Asset */}
@@ -71,15 +73,15 @@ export const CoinRow = memo(function CoinRow({ coin, onSelect }: CoinRowProps) {
             }}
           />
           <div>
-            <p className="text-sm font-semibold text-white leading-tight">{coin.name}</p>
-            <p className="text-xs text-gray-500 uppercase font-mono">{coin.symbol}</p>
+            <p className={cn('text-sm font-semibold leading-tight', isDark ? 'text-white' : 'text-gray-900')}>{coin.name}</p>
+            <p className={cn('text-xs uppercase font-mono', isDark ? 'text-gray-500' : 'text-gray-400')}>{coin.symbol}</p>
           </div>
         </div>
       </td>
 
       {/* Price */}
       <td className="py-4 px-3 text-right">
-        <span className="text-sm font-semibold text-white tabular-nums">
+        <span className={cn('text-sm font-semibold tabular-nums', isDark ? 'text-white' : 'text-gray-900')}>
           {formatCurrency(coin.current_price)}
         </span>
       </td>
@@ -115,14 +117,14 @@ export const CoinRow = memo(function CoinRow({ coin, onSelect }: CoinRowProps) {
 
       {/* Market Cap */}
       <td className="py-4 px-3 text-right hidden sm:table-cell">
-        <span className="text-sm text-gray-300 tabular-nums">
+        <span className={cn('text-sm tabular-nums', isDark ? 'text-gray-300' : 'text-gray-600')}>
           {formatLargeNumber(coin.market_cap, '$')}
         </span>
       </td>
 
       {/* 24h Volume */}
       <td className="py-4 px-3 text-right hidden lg:table-cell">
-        <span className="text-sm text-gray-400 tabular-nums">
+        <span className={cn('text-sm tabular-nums', isDark ? 'text-gray-400' : 'text-gray-500')}>
           {formatLargeNumber(coin.total_volume, '$')}
         </span>
       </td>
@@ -148,8 +150,12 @@ export const CoinRow = memo(function CoinRow({ coin, onSelect }: CoinRowProps) {
           aria-pressed={watched}
           className={cn(
             'p-1.5 rounded-full transition-all duration-150',
-            'hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400',
-            watched ? 'text-warning-400' : 'text-gray-600 hover:text-gray-400 opacity-0 group-hover:opacity-100'
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400',
+            watched
+              ? 'text-warning-400'
+              : isDark
+                ? 'text-gray-600 hover:text-gray-400 hover:bg-white/10 opacity-0 group-hover:opacity-100'
+                : 'text-gray-300 hover:text-gray-500 hover:bg-gray-100 opacity-0 group-hover:opacity-100'
           )}
         >
           <Star className="w-4 h-4" fill={watched ? 'currentColor' : 'none'} aria-hidden="true" />

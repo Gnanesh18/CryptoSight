@@ -1,50 +1,47 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useCallback } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { fetchCoinDetail, fetchCoinChart } from '../services/coingecko';
 import type { CoinDetail, CoinChartData, ChartRange } from '../types/coin';
 
+/**
+ * Fetches coin detail and chart data using React Query.
+ * - Detail is cached per coin ID
+ * - Chart is cached per (coin, range) pair
+ * - Hooks are always called (no conditional hook calls)
+ */
 export function useCoinDetail(coinId: string | null) {
-  const [detail, setDetail] = useState<CoinDetail | null>(null);
-  const [chartData, setChartData] = useState<CoinChartData | null>(null);
   const [chartRange, setChartRange] = useState<ChartRange>('1');
-  const [isLoadingDetail, setIsLoadingDetail] = useState(false);
-  const [isLoadingChart, setIsLoadingChart] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const mountedRef = useRef(true);
 
-  // Fetch coin detail when coinId changes
-  useEffect(() => {
-    mountedRef.current = true;
-    if (!coinId) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setDetail(null);
-      setChartData(null);
-      return;
-    }
-    setIsLoadingDetail(true);
-    setError(null);
-    fetchCoinDetail(coinId)
-      .then((d) => { if (mountedRef.current) { setDetail(d); setError(null); } })
-      .catch((e) => { if (mountedRef.current) setError((e as Error).message); })
-      .finally(() => { if (mountedRef.current) setIsLoadingDetail(false); });
-    return () => { mountedRef.current = false; };
-  }, [coinId]);
+  const {
+    data: detail,
+    isLoading: isLoadingDetail,
+    error: detailError,
+  } = useQuery<CoinDetail, Error>({
+    queryKey: ['coin', 'detail', coinId],
+    queryFn: () => fetchCoinDetail(coinId!),
+    enabled: !!coinId,
+  });
 
-  // Fetch chart data when coinId or range changes
-  useEffect(() => {
-    mountedRef.current = true;
-    if (!coinId) return;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsLoadingChart(true);
-    fetchCoinChart(coinId, chartRange)
-      .then((d) => { if (mountedRef.current) { setChartData(d); } })
-      .catch(() => { /* chart errors are non-fatal */ })
-      .finally(() => { if (mountedRef.current) setIsLoadingChart(false); });
-    return () => { mountedRef.current = false; };
-  }, [coinId, chartRange]);
+  const {
+    data: chartData,
+    isLoading: isLoadingChart,
+  } = useQuery<CoinChartData, Error>({
+    queryKey: ['coin', 'chart', coinId, chartRange],
+    queryFn: () => fetchCoinChart(coinId!, chartRange),
+    enabled: !!coinId,
+  });
 
   const changeRange = useCallback((range: ChartRange) => {
     setChartRange(range);
   }, []);
 
-  return { detail, chartData, chartRange, changeRange, isLoadingDetail, isLoadingChart, error };
+  return {
+    detail: detail ?? null,
+    chartData: chartData ?? null,
+    chartRange,
+    changeRange,
+    isLoadingDetail,
+    isLoadingChart,
+    error: detailError?.message ?? null,
+  };
 }

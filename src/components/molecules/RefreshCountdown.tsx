@@ -1,9 +1,11 @@
 import { RefreshCw } from 'lucide-react';
+import { cn } from '../../utils/cn';
 
 interface RefreshCountdownProps {
   secondsRemaining: number;
   totalSeconds?: number;
   isRefreshing: boolean;
+  isDark?: boolean;
 }
 
 /**
@@ -14,6 +16,7 @@ export function RefreshCountdown({
   secondsRemaining,
   totalSeconds = 60,
   isRefreshing,
+  isDark = true,
 }: RefreshCountdownProps) {
   const progress = (secondsRemaining / totalSeconds) * 100;
 
@@ -25,13 +28,13 @@ export function RefreshCountdown({
           <span className="text-xs font-medium">Updating…</span>
         </div>
       ) : (
-        <span className="text-xs text-gray-500 tabular-nums whitespace-nowrap">
+        <span className={cn('text-xs tabular-nums whitespace-nowrap', isDark ? 'text-gray-500' : 'text-gray-400')}>
           Refreshes in {secondsRemaining}s
         </span>
       )}
       {/* Progress bar */}
       <div
-        className="h-1 w-20 bg-white/8 rounded-full overflow-hidden flex-shrink-0"
+        className={cn('h-1 w-20 rounded-full overflow-hidden flex-shrink-0', isDark ? 'bg-white/8' : 'bg-gray-200')}
         role="progressbar"
         aria-valuenow={secondsRemaining}
         aria-valuemin={0}

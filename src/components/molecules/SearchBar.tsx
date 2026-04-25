@@ -5,6 +5,7 @@ import { cn } from '../../utils/cn';
 interface SearchBarProps {
   value: string;
   onChange: (value: string) => void;
+  isDark?: boolean;
   className?: string;
 }
 
@@ -12,7 +13,7 @@ interface SearchBarProps {
  * Accessible, debounce-ready search bar.
  * Parent is responsible for debouncing the value via useDebounce().
  */
-export function SearchBar({ value, onChange, className }: SearchBarProps) {
+export function SearchBar({ value, onChange, isDark = true, className }: SearchBarProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleClear = () => {
@@ -25,14 +26,15 @@ export function SearchBar({ value, onChange, className }: SearchBarProps) {
       className={cn(
         'relative flex items-center gap-2',
         'rounded-xl border transition-all duration-200',
-        'bg-white/5 dark:bg-white/5',
-        'border-white/10 focus-within:border-brand-400/60',
+        isDark
+          ? 'bg-white/5 border-white/10 focus-within:border-brand-400/60'
+          : 'bg-gray-100 border-gray-200 focus-within:border-brand-500/60',
         'focus-within:ring-2 focus-within:ring-brand-400/20',
         className
       )}
     >
       <Search
-        className="absolute left-3.5 w-4 h-4 text-gray-400 pointer-events-none"
+        className={cn('absolute left-3.5 w-4 h-4 pointer-events-none', isDark ? 'text-gray-400' : 'text-gray-500')}
         aria-hidden="true"
       />
       <input
@@ -48,7 +50,10 @@ export function SearchBar({ value, onChange, className }: SearchBarProps) {
         spellCheck={false}
         className={cn(
           'w-full py-2.5 pl-10 pr-10',
-          'bg-transparent text-sm text-white placeholder:text-gray-500',
+          'bg-transparent text-sm',
+          isDark
+            ? 'text-white placeholder:text-gray-500'
+            : 'text-gray-900 placeholder:text-gray-400',
           'focus:outline-none',
           'font-body'
         )}
@@ -58,7 +63,10 @@ export function SearchBar({ value, onChange, className }: SearchBarProps) {
           type="button"
           aria-label="Clear search"
           onClick={handleClear}
-          className="absolute right-3 p-0.5 rounded-full text-gray-400 hover:text-white transition-colors"
+          className={cn(
+            'absolute right-3 p-0.5 rounded-full transition-colors cursor-pointer',
+            isDark ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-900'
+          )}
         >
           <X className="w-4 h-4" />
         </button>

@@ -6,6 +6,9 @@ const BASE_URL =
 // Use API key from env
 const API_KEY = import.meta.env.VITE_COINGECKO_API_KEY || '';
 
+// Track in-flight requests to prevent duplicates
+const inflightRequests = new Map<string, Promise<unknown>>();
+
 function buildUrl(path: string, params: Record<string, string | number | boolean> = {}): string {
   const searchParams = new URLSearchParams();
   for (const [key, value] of Object.entries(params)) {
@@ -19,13 +22,37 @@ function buildUrl(path: string, params: Record<string, string | number | boolean
 
 async function apiFetch<T>(path: string, params: Record<string, string | number | boolean> = {}): Promise<T> {
   const url = buildUrl(path, params);
-  const response = await fetch(url);
-  if (!response.ok) {
-    if (response.status === 429) throw new Error('Rate limit exceeded. Please wait before refreshing.');
-    if (response.status === 401 || response.status === 403) throw new Error('API authentication failed.');
-    throw new Error(`CoinGecko API error: ${response.status} ${response.statusText}`);
+
+  // Deduplicate identical in-flight requests
+  const existing = inflightRequests.get(url);
+  if (existing) return existing as Promise<T>;
+
+  const request = (async () => {
+    const response = await fetch(url, {
+      headers: {
+        'Accept': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      if (response.status === 429) {
+        const retryAfter = response.headers.get('Retry-After');
+        const waitSecs = retryAfter ? parseInt(retryAfter, 10) : 60;
+        throw new Error(`Rate limit exceeded. Please wait ${waitSecs}s before refreshing.`);
+      }
+      if (response.status === 401 || response.status === 403) throw new Error('API authentication failed.');
+      throw new Error(`CoinGecko API error: ${response.status} ${response.statusText}`);
+    }
+    return response.json() as Promise<T>;
+  })();
+
+  inflightRequests.set(url, request);
+
+  try {
+    return await request;
+  } finally {
+    inflightRequests.delete(url);
   }
-  return response.json() as Promise<T>;
 }
 
 /**

@@ -8,6 +8,7 @@ import { EmptyState } from '../molecules/EmptyState';
 import { Pagination } from '../molecules/Pagination';
 import { useDebounce } from '../../hooks/useDebounce';
 import { useWatchlistStore } from '../../store/useWatchlistStore';
+import { cn } from '../../utils/cn';
 
 interface MarketTableProps {
   coins: Coin[];
@@ -17,6 +18,7 @@ interface MarketTableProps {
   onCoinSelect: (coin: Coin) => void;
   onRetry: () => void;
   activeTab: Tab;
+  isDark?: boolean;
 }
 
 const PAGE_SIZE = 20;
@@ -29,6 +31,7 @@ export function MarketTable({
   onCoinSelect,
   onRetry,
   activeTab,
+  isDark = true,
 }: MarketTableProps) {
   const [sortField, setSortField] = useState<SortField>('market_cap_rank');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
@@ -92,62 +95,62 @@ export function MarketTable({
     [processedCoins, page]
   );
 
-  if (error && !isLoading) return <ErrorBanner message={error} onRetry={onRetry} />;
+  if (error && !isLoading) return <ErrorBanner message={error} onRetry={onRetry} isDark={isDark} />;
   const isEmpty = !isLoading && processedCoins.length === 0;
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="overflow-x-auto rounded-xl border border-white/8">
+      <div className={cn('overflow-x-auto rounded-xl border', isDark ? 'border-white/8' : 'border-gray-200')}>
         <table className="w-full border-collapse" aria-label="Cryptocurrency market data">
           <thead>
-            <tr className="border-b border-white/10">
+            <tr className={cn('border-b', isDark ? 'border-white/10' : 'border-gray-200')}>
               <th className="py-3 pl-4 pr-2 text-left w-12">
-                <SortableHeader field="market_cap_rank" label="#" currentField={sortField} currentDirection={sortDirection} onSort={handleSort} />
+                <SortableHeader field="market_cap_rank" label="#" currentField={sortField} currentDirection={sortDirection} onSort={handleSort} isDark={isDark} />
               </th>
               <th className="py-3 px-3 text-left">
-                <SortableHeader field="name" label="Asset" currentField={sortField} currentDirection={sortDirection} onSort={handleSort} />
+                <SortableHeader field="name" label="Asset" currentField={sortField} currentDirection={sortDirection} onSort={handleSort} isDark={isDark} />
               </th>
               <th className="py-3 px-3 text-right">
-                <SortableHeader field="current_price" label="Price" currentField={sortField} currentDirection={sortDirection} onSort={handleSort} align="right" />
+                <SortableHeader field="current_price" label="Price" currentField={sortField} currentDirection={sortDirection} onSort={handleSort} align="right" isDark={isDark} />
               </th>
               <th className="py-3 px-3 text-right hidden xl:table-cell">
-                <SortableHeader field="price_change_percentage_1h_in_currency" label="1h %" currentField={sortField} currentDirection={sortDirection} onSort={handleSort} align="right" />
+                <SortableHeader field="price_change_percentage_1h_in_currency" label="1h %" currentField={sortField} currentDirection={sortDirection} onSort={handleSort} align="right" isDark={isDark} />
               </th>
               <th className="py-3 px-3 text-right">
-                <SortableHeader field="price_change_percentage_24h" label="24h %" currentField={sortField} currentDirection={sortDirection} onSort={handleSort} align="right" />
+                <SortableHeader field="price_change_percentage_24h" label="24h %" currentField={sortField} currentDirection={sortDirection} onSort={handleSort} align="right" isDark={isDark} />
               </th>
               <th className="py-3 px-3 text-right hidden lg:table-cell">
-                <SortableHeader field="price_change_percentage_7d_in_currency" label="7d %" currentField={sortField} currentDirection={sortDirection} onSort={handleSort} align="right" />
+                <SortableHeader field="price_change_percentage_7d_in_currency" label="7d %" currentField={sortField} currentDirection={sortDirection} onSort={handleSort} align="right" isDark={isDark} />
               </th>
               <th className="py-3 px-3 text-right hidden sm:table-cell">
-                <SortableHeader field="market_cap" label="Market Cap" currentField={sortField} currentDirection={sortDirection} onSort={handleSort} align="right" />
+                <SortableHeader field="market_cap" label="Market Cap" currentField={sortField} currentDirection={sortDirection} onSort={handleSort} align="right" isDark={isDark} />
               </th>
               <th className="py-3 px-3 text-right hidden lg:table-cell">
-                <SortableHeader field="total_volume" label="Volume (24h)" currentField={sortField} currentDirection={sortDirection} onSort={handleSort} align="right" />
+                <SortableHeader field="total_volume" label="Volume (24h)" currentField={sortField} currentDirection={sortDirection} onSort={handleSort} align="right" isDark={isDark} />
               </th>
               <th className="py-3 px-3 text-right hidden lg:table-cell">
-                <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Last 7 Days</span>
+                <span className={cn('text-xs font-semibold uppercase tracking-wider', isDark ? 'text-gray-500' : 'text-gray-400')}>Last 7 Days</span>
               </th>
               <th className="py-3 pl-3 pr-4 w-10" aria-label="Watchlist" />
             </tr>
           </thead>
           <tbody>
             {isLoading
-              ? Array.from({ length: 10 }).map((_, i) => <CoinRowSkeleton key={i} />)
+              ? Array.from({ length: 10 }).map((_, i) => <CoinRowSkeleton key={i} isDark={isDark} />)
               : paginatedCoins.map((coin) => (
-                  <CoinRow key={coin.id} coin={coin} onSelect={onCoinSelect} />
+                  <CoinRow key={coin.id} coin={coin} onSelect={onCoinSelect} isDark={isDark} />
                 ))}
           </tbody>
         </table>
         {isEmpty && !isLoading && (
           activeTab === 'watchlist'
-            ? <EmptyState type="watchlist" />
-            : <EmptyState type="search" query={debouncedQuery} />
+            ? <EmptyState type="watchlist" isDark={isDark} />
+            : <EmptyState type="search" query={debouncedQuery} isDark={isDark} />
         )}
       </div>
 
       {!isLoading && !isEmpty && totalPages > 1 && (
-        <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+        <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} isDark={isDark} />
       )}
     </div>
   );

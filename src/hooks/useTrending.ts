@@ -1,23 +1,21 @@
-import { useState, useEffect, useRef } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { fetchTrending } from '../services/coingecko';
 import type { TrendingData } from '../types/coin';
 
+/**
+ * Fetches trending coins (top searched in last 24h).
+ * Cached and automatically revalidated by React Query.
+ */
 export function useTrending() {
-  const [data, setData] = useState<TrendingData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const mountedRef = useRef(true);
+  const { data, isLoading, error } = useQuery<TrendingData, Error>({
+    queryKey: ['market', 'trending'],
+    queryFn: fetchTrending,
+    staleTime: 2 * 60_000, // Trending data is fairly stable — 2min stale time
+  });
 
-  useEffect(() => {
-    mountedRef.current = true;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsLoading(true);
-    fetchTrending()
-      .then((d) => { if (mountedRef.current) { setData(d); setError(null); } })
-      .catch((e) => { if (mountedRef.current) setError((e as Error).message); })
-      .finally(() => { if (mountedRef.current) setIsLoading(false); });
-    return () => { mountedRef.current = false; };
-  }, []);
-
-  return { data, isLoading, error };
+  return {
+    data: data ?? null,
+    isLoading,
+    error: error?.message ?? null,
+  };
 }

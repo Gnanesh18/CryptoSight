@@ -1,16 +1,18 @@
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 import { Button } from '../atoms/Button';
+import { cn } from '../../utils/cn';
 
 interface ErrorBannerProps {
   message: string;
   onRetry: () => void;
+  isDark?: boolean;
 }
 
 /**
  * Error state banner — shown on API failure.
  * Never shows a blank screen; always provides a retry action.
  */
-export function ErrorBanner({ message, onRetry }: ErrorBannerProps) {
+export function ErrorBanner({ message, onRetry, isDark = true }: ErrorBannerProps) {
   return (
     <div
       role="alert"
@@ -22,12 +24,17 @@ export function ErrorBanner({ message, onRetry }: ErrorBannerProps) {
           <AlertTriangle className="w-7 h-7 text-danger-400" aria-hidden="true" />
         </div>
         <div>
-          <h3 className="text-base font-semibold text-white mb-1">
+          <h3 className={cn('text-base font-semibold mb-1', isDark ? 'text-white' : 'text-gray-900')}>
             Failed to load market data
           </h3>
-          <p className="text-sm text-gray-400 leading-relaxed">{message}</p>
+          <p className={cn('text-sm leading-relaxed', isDark ? 'text-gray-400' : 'text-gray-500')}>{message}</p>
         </div>
-        <Button variant="ghost" size="md" onClick={onRetry} className="gap-2">
+        <Button
+          variant="ghost"
+          size="md"
+          onClick={onRetry}
+          className={cn('gap-2', !isDark && 'border-gray-200 text-gray-600 hover:text-gray-900 hover:bg-gray-100')}
+        >
           <RefreshCw className="w-4 h-4" aria-hidden="true" />
           Try Again
         </Button>

@@ -1,12 +1,17 @@
 import { Skeleton } from '../atoms/Skeleton';
+import { cn } from '../../utils/cn';
+
+interface CoinRowSkeletonProps {
+  isDark?: boolean;
+}
 
 /**
  * Skeleton placeholder that mirrors the CoinRow layout.
  * Shown during initial data fetch to give a sense of content structure.
  */
-export function CoinRowSkeleton() {
+export function CoinRowSkeleton({ isDark = true }: CoinRowSkeletonProps) {
   return (
-    <tr className="border-b border-white/5 h-[69px]" aria-hidden="true">
+    <tr className={cn('border-b h-[69px]', isDark ? 'border-white/5' : 'border-gray-100')} aria-hidden="true">
       {/* Rank */}
       <td className="py-4 pl-4 pr-2 w-12">
         <Skeleton variant="text" width={20} />

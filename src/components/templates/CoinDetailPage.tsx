@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { X, Star, ExternalLink, Globe, TrendingUp, TrendingDown, ArrowLeft } from 'lucide-react';
 import { useCoinDetail } from '../../hooks/useCoinDetail';
@@ -29,26 +29,27 @@ export function CoinDetailPage({ isDark }: CoinDetailPageProps) {
   const { id: coinId } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<DetailTab>('overview');
-  
-  if (!coinId) return null;
 
-  const onClose = () => navigate('/');
-
-  const { detail, chartData, chartRange, changeRange, isLoadingDetail, isLoadingChart, error } = useCoinDetail(coinId);
+  // All hooks must be called before any early return (React rules of hooks)
+  const { detail, chartData, chartRange, changeRange, isLoadingDetail, isLoadingChart, error } = useCoinDetail(coinId ?? null);
   const { toggle, isWatched } = useWatchlistStore();
 
-  const watched = isWatched(coinId);
+  const watched = coinId ? isWatched(coinId) : false;
   const md = detail?.market_data;
   const price = md?.current_price.usd ?? 0;
   const change24h = md?.price_change_percentage_24h ?? 0;
   const isPositive = change24h >= 0;
 
   // Strip HTML from description
-  const description = detail?.description.en
+  const description = useMemo(() => detail?.description.en
     ?.replace(/<[^>]+>/g, '')
     ?.replace(/\r\n/g, '\n')
     ?.split('\n')[0]
-    ?.slice(0, 600) ?? '';
+    ?.slice(0, 600) ?? '', [detail]);
+
+  if (!coinId) return null;
+
+  const onClose = () => navigate('/');
 
   const tabs: { id: DetailTab; label: string }[] = [
     { id: 'overview', label: 'Overview' },
@@ -221,7 +222,7 @@ export function CoinDetailPage({ isDark }: CoinDetailPageProps) {
                 {/* Price change badges */}
                 <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
                   {[
-                    { label: '1h', value: md?.price_change_percentage_24h },
+                    { label: '1h', value: md?.price_change_percentage_24h != null ? change24h : undefined },
                     { label: '24h', value: md?.price_change_percentage_24h },
                     { label: '7d', value: md?.price_change_percentage_7d },
                     { label: '14d', value: md?.price_change_percentage_14d },

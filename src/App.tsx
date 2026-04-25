@@ -1,13 +1,14 @@
-import { useState, useCallback, Suspense, lazy } from 'react';
+import { useState, useCallback, useEffect, Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Sun, Moon, BarChart3, Search, X } from 'lucide-react';
 import { useLocalStorage } from './hooks/useLocalStorage';
+import { useToast } from './hooks/useToast';
 import { SearchBar } from './components/molecules/SearchBar';
 import { Button } from './components/atoms/Button';
 import { ErrorBoundary } from './components/atoms/ErrorBoundary';
 import { Skeleton } from './components/atoms/Skeleton';
+import { ToastContainer } from './components/atoms/Toast';
 import { cn } from './utils/cn';
-import './index.css';
 
 // Eager load Dashboard
 import Dashboard from './pages/Dashboard';
@@ -33,15 +34,19 @@ export default function App() {
   const [theme, setTheme] = useLocalStorage<'dark' | 'light'>('crypto-theme', getInitialTheme());
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
+  const { toasts, removeToast } = useToast();
 
   const isDark = theme === 'dark';
   const toggleTheme = useCallback(() => setTheme(isDark ? 'light' : 'dark'), [isDark, setTheme]);
 
-  // Make sure the HTML tag also gets the dark class if needed by Tailwind
-  if (typeof document !== 'undefined') {
-    if (isDark) document.documentElement.classList.add('dark');
-    else document.documentElement.classList.remove('dark');
-  }
+  // Sync dark class to <html> element via useEffect (not in render body)
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDark]);
 
   return (
     <div className={cn('min-h-screen transition-colors duration-300', isDark ? 'bg-gray-950 text-white' : 'bg-gray-50 text-gray-900')}>
@@ -65,7 +70,7 @@ export default function App() {
 
             {/* Search bar (expandable) */}
             <div className={cn('flex-1 max-w-md transition-all', showSearch ? 'block' : 'hidden sm:block')}>
-              <SearchBar value={searchQuery} onChange={setSearchQuery} className={cn(isDark ? '' : 'bg-white border-gray-200 text-gray-900')} />
+              <SearchBar value={searchQuery} onChange={setSearchQuery} isDark={isDark} />
             </div>
 
             {/* Right actions */}
@@ -92,6 +97,9 @@ export default function App() {
           </Routes>
         </Suspense>
       </ErrorBoundary>
+
+      {/* ── Toast Notifications ── */}
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
     </div>
   );
 }
