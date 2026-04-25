@@ -59,8 +59,8 @@
   </tr>
   <tr>
     <td align="center" colspan="2">
-      <img src="https://github.com/user-attachments/assets/7ded8e23-2d6c-4ad1-b17d-6fc29e6c6d02" alt="Dark Mode" width="50%" />
-      <br/><sub><b>Dark Mode Support</b></sub>
+      <img src="https://github.com/user-attachments/assets/6112dff8-dd0f-4e86-9e88-0364ca887f3f" alt="Dark Mode" width="50%" />
+      <br/><sub><b>Light Mode Support</b></sub>
     </td>
   </tr>
 </table>

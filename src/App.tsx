@@ -10,6 +10,7 @@ import { cn } from './utils/cn';
 
 // pages
 import Dashboard from './pages/Dashboard';
+import NotFound from './pages/NotFound';
 const CoinDetailPage = lazy(() => import('./components/templates/CoinDetailPage').then(m => ({ default: m.CoinDetailPage })));
 
 export default function App() {
@@ -26,6 +27,7 @@ export default function App() {
             <Routes>
               <Route path="/" element={<Dashboard isDark={isDark} />} />
               <Route path="/coin/:id" element={<CoinDetailPage isDark={isDark} />} />
+              <Route path="*" element={<NotFound isDark={isDark} />} />
             </Routes>
           </Suspense>
         </ErrorBoundary>
