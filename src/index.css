@@ -1,0 +1,110 @@
+/* ============================================================
+   CSS custom properties — consumed by Tailwind's @theme layer
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  /* Typography */
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  /* Brand palette */
+  --color-brand-500: oklch(65% 0.22 260);
+  --color-brand-400: oklch(72% 0.20 260);
+  --color-brand-600: oklch(56% 0.24 260);
+
+  /* Semantic */
+  --color-success-400: oklch(75% 0.18 142);
+  --color-success-500: oklch(68% 0.20 142);
+  --color-danger-400: oklch(70% 0.20 25);
+  --color-danger-500: oklch(62% 0.22 25);
+  --color-warning-400: oklch(78% 0.18 65);
+}
+
+/* ---------- Base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+  color-scheme: light dark;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  margin: 0;
+  padding: 0;
+}
+
+/* ---------- Dark mode handled via .dark class on <html> ---------- */
+
+/* ---------- Animations ---------- */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes flash-green {
+  0%, 100% { background-color: transparent; }
+  30%       { background-color: oklch(68% 0.20 142 / 0.18); }
+}
+
+@keyframes flash-red {
+  0%, 100% { background-color: transparent; }
+  30%       { background-color: oklch(62% 0.22 25 / 0.18); }
+}
+
+@keyframes slide-in-right {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { transform: translateY(32px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes count-down {
+  from { width: 100%; }
+  to   { width: 0%; }
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 25%,
+    oklch(100% 0 0 / 0.08) 50%,
+    transparent 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+.animate-flash-green { animation: flash-green 0.8s ease-out forwards; }
+.animate-flash-red   { animation: flash-red   0.8s ease-out forwards; }
+
+.animate-slide-in-right { animation: slide-in-right 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.animate-fade-in        { animation: fade-in        0.2s ease-out forwards; }
+.animate-slide-up       { animation: slide-up       0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+/* Progress bar animation driven by CSS custom property */
+.countdown-bar {
+  animation: count-down linear forwards;
+  animation-duration: var(--countdown-duration, 60s);
+}
+
+/* ---------- Scroll ---------- */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: oklch(60% 0 0 / 0.3); border-radius: 3px; }
